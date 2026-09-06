@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0}
+*{box-sizing:border-box}
+a{color:#a16207}a:hover{color:#d9a520}
+button{cursor:pointer;font-family:Outfit,sans-serif}
+input,textarea,select{font-family:Outfit,sans-serif;color:inherit}
+textarea::placeholder,input::placeholder{color:var(--mu);opacity:.8}
+[data-theme="dark"]{--bg:#0e0c09;--s1:#181410;--s2:#241d15;--fg:#f2e9d8;--mu:#a3957f;--bd:rgba(255,255,255,.09);--ac:#d9a520;--acfg:#1a1200;--ok:#7cc47f;--warn:#e0a13a;--bad:#e56f5e;--sh:0 12px 32px rgba(0,0,0,.55)}
+[data-theme="light"]{--bg:#f3ede2;--s1:#fdf9f1;--s2:#eae2d2;--fg:#1d1710;--mu:#6b5f4e;--bd:rgba(40,30,10,.13);--ac:#a16207;--acfg:#ffffff;--ok:#2f7d3a;--warn:#9a5b00;--bad:#b83a2c;--sh:0 12px 32px rgba(60,40,10,.18)}
+input[type=range]{-webkit-appearance:none;appearance:none;height:8px;border-radius:4px;outline:none;padding:0;border:0}
+input[type=range]::-webkit-slider-runnable-track{background:transparent;height:8px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-8px;border-radius:50%;background:var(--thumb,var(--ac));border:3px solid var(--s1);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+input[type=range]::-moz-range-track{background:transparent;height:8px}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--thumb,var(--ac));border:3px solid var(--s1);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+@keyframes gf-pulse{0%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:.85}}
+@keyframes gf-spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div data-theme="{{ themeName }}" style="min-height:100vh;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:18px;font-family:Outfit,sans-serif;color:var(--fg)">
+  <div style="display:flex;gap:12px;align-items:center;max-width:402px;width:100%;justify-content:space-between">
+    <div>
+      <div style="font:500 22px/1.1 Newsreader,serif">GraceForge</div>
+      <div style="font:400 12px/1.4 Outfit;color:var(--mu)">Beta v10 · Phase 2 community build · all four tiers</div>
+    </div>
+    <button onClick="{{ toggleTheme }}" style="background:var(--s1);color:var(--fg);border:1px solid var(--bd);border-radius:999px;padding:8px 14px;font:500 12px Outfit">{{ themeLabel }}</button>
+  </div>
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ isDark }}" hint-size="402px,874px">
+    <div style="height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--fg);position:relative;font-family:Outfit,sans-serif;zoom:{{ scale }}">
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:66px 20px 14px;background:linear-gradient(180deg,color-mix(in oklab,{{ tabHue }} 28%,var(--bg)),var(--bg))">
+        <div>
+          <div style="font:600 11px/1 Outfit;letter-spacing:.1em;text-transform:uppercase;color:{{ tabHue }}">{{ tabKicker }}</div>
+          <div style="font:500 28px/1.1 Newsreader,serif;margin-top:6px">{{ tabTitle }}</div>
+        </div>
+        <button onClick="{{ openSettings }}" aria-label="Settings" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--bd);background:var(--s1);color:var(--fg);display:flex;align-items:center;justify-content:center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg>
+        </button>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow:auto;padding:0 16px 110px;display:flex;flex-direction:column;gap:14px">
+
+        <!-- ================= GUIDE ================= -->
+        <sc-if value="{{ isGuide }}" hint-placeholder-val="{{ true }}">
+          <sc-if value="{{ guideList }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Master equation</div>
+              <div style="font:500 24px/1.2 Newsreader,serif;margin-top:8px">{{ masterFormula }}</div>
+              <div style="font:400 13px/1.5 Outfit;color:var(--mu);margin-top:8px">Score each variable 1–10. R above 1.5 is fortified, below 0.8 exposed. Tap a category to run its equation.</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <sc-for list="{{ guideCats }}" as="c" hint-placeholder-count="12">
+                <button onClick="{{ c.open }}" style="text-align:left;background:linear-gradient(160deg,color-mix(in oklab,{{ c.hue }} 22%,var(--s1)),var(--s1) 70%);border:1px solid color-mix(in oklab,{{ c.hue }} 35%,var(--bd));border-top:4px solid {{ c.hue }};border-radius:16px;padding:14px;color:var(--fg);display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                    <div style="font:500 18px/1.1 Newsreader,serif">{{ c.name }}</div>
+                    <div style="font:600 13px Outfit;color:{{ c.color }}">{{ c.r }}</div>
+                  </div>
+                  <div style="font:400 12px/1.3 Outfit;color:var(--mu)">{{ c.eq }}</div>
+                  <div style="display:flex;gap:3px;margin-top:4px">
+                    <sc-for list="{{ c.bars }}" as="b" hint-placeholder-count="6">
+                      <div style="flex:1;height:14px;display:flex;align-items:flex-end;background:var(--s2);border-radius:2px"><div style="width:100%;border-radius:2px;background:{{ b.color }};height:{{ b.pct }}"></div></div>
+                    </sc-for>
+                  </div>
+                  <div style="font:600 11px/1 Outfit;letter-spacing:.06em;text-transform:uppercase;color:{{ c.color }}">{{ c.status }}</div>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ guideDetail }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ backToList }}" style="align-self:flex-start;background:none;border:0;color:var(--mu);font:500 13px Outfit;padding:0;display:flex;align-items:center;gap:6px">← All categories</button>
+            <div>
+              <div style="font:500 32px/1.05 Newsreader,serif;color:{{ catHue }}">{{ cat.name }}</div>
+              <div style="font:400 14px/1.4 Outfit;color:var(--mu);margin-top:4px">{{ cat.eq }}</div>
+            </div>
+            <div style="display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:12px">
+              <sc-for list="{{ guideSegs }}" as="s" hint-placeholder-count="4">
+                <button onClick="{{ s.onTap }}" style="flex:1;border:0;border-radius:9px;padding:9px 4px;font:600 12px Outfit;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ gEquation }}" hint-placeholder-val="{{ true }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px">
+                <div style="font:500 17px/1.3 Newsreader,serif;color:var(--mu)">{{ catFormula }}</div>
+                <div style="display:flex;align-items:baseline;gap:10px">
+                  <div style="font:500 56px/1 Newsreader,serif;color:{{ rColor }}">{{ rScore }}</div>
+                  <div style="font:600 12px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ rColor }}">{{ rStatus }}</div>
+                </div>
+                <div style="font:400 13px/1.5 Outfit;color:var(--fg);background:var(--s2);border-radius:10px;padding:10px 12px;margin-top:6px"><span style="color:var(--ac);font-weight:600">Move first: </span>{{ levText }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ vars }}" as="v" hint-placeholder-count="6">
+                  <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px 14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <div><span style="font:600 13px Outfit;color:{{ v.color }}">{{ v.k }}</span> <span style="font:500 14px Outfit">{{ v.label }}</span></div>
+                      <div style="font:600 16px Newsreader,serif">{{ v.val }}</div>
+                    </div>
+                    <div style="font:400 12px/1.4 Outfit;color:var(--mu);margin:2px 0 8px">{{ v.desc }}</div>
+                    <input type="range" min="1" max="10" value="{{ v.val }}" onChange="{{ v.set }}" style="width:100%;margin:4px 0 0;--thumb:{{ v.color }};background:linear-gradient(90deg,{{ v.color }} {{ v.pct }},var(--s2) {{ v.pct }})">
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ gCase }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ catHue }}">Biblical case study</div>
+                  <div style="font:600 11px/1 Outfit;letter-spacing:.06em;text-transform:uppercase;color:{{ csColor }}">{{ csOutcome }}</div>
+                </div>
+                <div style="font:500 26px/1.1 Newsreader,serif">{{ cs.figure }}</div>
+                <div style="font:500 13px Outfit;color:var(--ac)">{{ cs.ref }}</div>
+                <div style="font:400 15px/1.55 Newsreader,serif">{{ cs.narrative }}</div>
+                <div style="display:flex;gap:6px;margin-top:6px">
+                  <sc-for list="{{ csBars }}" as="b" hint-placeholder-count="6">
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+                      <div style="width:100%;height:56px;display:flex;align-items:flex-end;background:var(--s2);border-radius:4px"><div style="width:100%;border-radius:4px;background:{{ b.color }};height:{{ b.pct }}"></div></div>
+                      <div style="font:600 11px Outfit;color:var(--mu)">{{ b.k }} {{ b.val }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:8px;border-top:1px solid var(--bd);padding-top:10px"><span style="font:600 11px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">R at the moment</span><span style="font:500 24px Newsreader,serif;color:{{ csColor }}">{{ csR }}</span></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ gIdol }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ catHue }}">Worship diagnosis</div>
+                <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Sin is a worship disorder before it is a behavior problem. Name the idol; replace the worship.</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--bad)">The idol</div><div style="font:500 18px/1.2 Newsreader,serif;margin-top:6px">{{ cat.idol }}</div></div>
+                  <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--ok)">Replacement worship</div><div style="font:500 18px/1.2 Newsreader,serif;margin-top:6px">{{ cat.worship }}</div></div>
+                </div>
+                <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)">Accelerant (X)</div><div style="font:500 16px/1.3 Newsreader,serif;margin-top:6px">{{ cat.x }}</div></div>
+                <div style="border-left:2px solid var(--ac);padding-left:12px"><div style="font:italic 400 16px/1.5 Newsreader,serif">{{ cat.verse.text }}</div><div style="font:600 12px Outfit;color:var(--ac);margin-top:4px">{{ cat.verse.ref }}</div></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ gPair }}" hint-placeholder-val="{{ false }}">
+              <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Same protagonist, two outcomes. The variables that differ are the ones that decided it.</div>
+              <div style="font:500 20px/1.2 Newsreader,serif">{{ pair.protagonist }}</div>
+              <sc-for list="{{ pairSides }}" as="p" hint-placeholder-count="2">
+                <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;border-top:3px solid {{ p.color }}">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ p.color }}">{{ p.kind }}</div>
+                    <div style="font:500 22px Newsreader,serif;color:{{ p.color }}">R {{ p.r }}</div>
+                  </div>
+                  <div style="font:500 20px/1.15 Newsreader,serif">{{ p.title }}</div>
+                  <div style="font:500 12px Outfit;color:var(--ac)">{{ p.ref }}</div>
+                  <div style="font:400 14px/1.5 Outfit;color:var(--mu)">{{ p.note }}</div>
+                  <div style="display:flex;gap:5px">
+                    <sc-for list="{{ p.bars }}" as="b" hint-placeholder-count="6">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+                        <div style="width:100%;height:36px;display:flex;align-items:flex-end;background:var(--s2);border-radius:3px"><div style="width:100%;border-radius:3px;background:{{ b.color }};height:{{ b.pct }}"></div></div>
+                        <div style="font:600 10px Outfit;color:var(--mu)">{{ b.k }}{{ b.val }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="background:var(--s2);border-radius:12px;padding:12px;font:400 13px/1.5 Outfit"><span style="font-weight:600;color:var(--ac)">Deciding variables: </span>{{ pairDiff }}</div>
+            </sc-if>
+          </sc-if>
+        </sc-if>
+
+        <!-- ================= EQUIP ================= -->
+        <sc-if value="{{ isEquip }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:12px">
+            <sc-for list="{{ equipSegs }}" as="s" hint-placeholder-count="2">
+              <button onClick="{{ s.onTap }}" style="flex:1;border:0;border-radius:9px;padding:9px 4px;font:600 12px Outfit;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ eCards }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin:0 -16px;padding-left:16px;padding-right:16px">
+              <sc-for list="{{ cardFilters }}" as="f" hint-placeholder-count="6">
+                <button onClick="{{ f.onTap }}" style="flex:none;padding:7px 12px;border-radius:999px;border:1px solid {{ f.border }};font:500 12px Outfit;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font:500 12px Outfit;color:var(--mu)"><span>Card {{ cardPos }} of {{ cardTotal }}</span><span>{{ masteredCount }} hidden in the heart</span></div>
+            <sc-if value="{{ hasCard }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ flipCard }}" style="perspective:1200px;cursor:pointer;min-height:240px">
+                <div style="position:relative;min-height:240px;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d;transform:{{ cardTransform }}">
+                  <div style="position:absolute;inset:0;backface-visibility:hidden;background:linear-gradient(160deg,color-mix(in oklab,{{ card.hue }} 30%,var(--s1)),var(--s1) 75%);border:1px solid color-mix(in oklab,{{ card.hue }} 40%,var(--bd));border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh)">
+                    <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ card.hue }}">{{ card.catName }}</div>
+                    <div style="font:500 36px/1.1 Newsreader,serif">{{ card.ref }}</div>
+                    <div style="font:400 12px Outfit;color:var(--mu)">Recite it, then tap to check</div>
+                  </div>
+                  <div style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);background:{{ card.hue }};color:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh)">
+                    <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;opacity:.8">{{ card.ref }}</div>
+                    <div style="font:400 22px/1.35 Newsreader,serif">{{ card.text }}</div>
+                    <div style="font:400 12px Outfit;opacity:.8">Preloaded ammunition · Psalm 119:11</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ prevCard }}" style="width:48px;height:48px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--fg);font:600 16px Outfit">‹</button>
+                <button onClick="{{ againCard }}" style="flex:1;height:48px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--fg);font:600 14px Outfit">Again</button>
+                <button onClick="{{ masterCard }}" style="flex:1;height:48px;border-radius:12px;border:0;background:{{ masterBg }};color:{{ masterFg }};font:600 14px Outfit">{{ masterLabel }}</button>
+                <button onClick="{{ nextCard }}" style="width:48px;height:48px;border-radius:12px;border:1px solid var(--bd);background:var(--s1);color:var(--fg);font:600 16px Outfit">›</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noCard }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px dashed var(--bd);border-radius:16px;padding:24px;text-align:center;color:var(--mu);font:400 14px Outfit">No cards in this category yet. Add one below.</div>
+            </sc-if>
+            <sc-if value="{{ notAdding }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ startAdd }}" style="border:1px dashed var(--bd);background:none;color:var(--fg);border-radius:12px;padding:12px;font:500 14px Outfit">+ Add a verse to your deck</button>
+            </sc-if>
+            <sc-if value="{{ adding }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <input value="{{ newRef }}" onChange="{{ setNewRef }}" placeholder="Reference · e.g. Romans 6:11" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:500 14px Outfit">
+                <textarea value="{{ newText }}" onChange="{{ setNewText }}" rows="3" placeholder="Verse text" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:400 14px/1.4 Outfit;resize:none"></textarea>
+                <select value="{{ newCat }}" onChange="{{ setNewCat }}" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:500 14px Outfit">
+                  <sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
+                </select>
+                <div style="display:flex;gap:8px">
+                  <button onClick="{{ cancelAdd }}" style="flex:1;border:1px solid var(--bd);background:none;color:var(--fg);border-radius:10px;padding:11px;font:600 13px Outfit">Cancel</button>
+                  <button onClick="{{ saveCard }}" style="flex:1;border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:11px;font:600 13px Outfit">Add to deck</button>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ ePrinciples }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--ac);color:var(--acfg);border-radius:16px;padding:18px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;opacity:.85">Master equation</div>
+              <div style="font:500 26px/1.15 Newsreader,serif;margin-top:8px">{{ masterFormula }}</div>
+              <div style="font:400 13px/1.5 Outfit;margin-top:10px;opacity:.92">{{ masterGloss }}</div>
+            </div>
+            <sc-for list="{{ principles }}" as="p" hint-placeholder-count="6">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;gap:14px">
+                <div style="font:500 28px/1 Newsreader,serif;color:var(--ac);min-width:28px">{{ p.n }}</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="font:500 17px/1.25 Newsreader,serif">{{ p.title }}</div>
+                  <div style="font:400 13px/1.5 Outfit;color:var(--mu)">{{ p.body }}</div>
+                  <div style="font:600 12px Outfit;color:var(--ac)">{{ p.ref }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </sc-if>
+        </sc-if>
+
+        <!-- ================= JOURNEY ================= -->
+        <sc-if value="{{ isJourney }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <button onClick="{{ togglePlay }}" aria-label="Play or pause" style="width:44px;height:44px;border-radius:999px;border:0;background:var(--ac);color:var(--acfg);display:flex;align-items:center;justify-content:center;flex:none">
+                <sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" rx="1"></rect><rect x="14" y="4" width="5" height="16" rx="1"></rect></svg></sc-if>
+                <sc-if value="{{ paused }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"></path></svg></sc-if>
+              </button>
+              <div style="flex:1;min-width:0">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Worship atmosphere · Eph 5:19</div>
+                <div style="font:500 17px/1.2 Newsreader,serif;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ track.title }}</div>
+                <div style="font:400 12px Outfit;color:var(--mu)">{{ track.artist }}</div>
+              </div>
+              <button onClick="{{ nextTrack }}" aria-label="Next" style="width:36px;height:36px;border-radius:999px;border:1px solid var(--bd);background:none;color:var(--fg);font:600 14px Outfit">››</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font:500 11px Outfit;color:var(--mu)">
+              <span>{{ posLabel }}</span>
+              <div style="flex:1;height:4px;background:var(--s2);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--ac);width:{{ posPct }}"></div></div>
+              <span>{{ durLabel }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="5">
+                <button onClick="{{ t.onTap }}" style="display:flex;justify-content:space-between;align-items:center;border:0;background:{{ t.bg }};border-radius:8px;padding:7px 10px;font:500 13px Outfit;color:{{ t.fg }};text-align:left"><span>{{ t.title }}</span><span style="color:var(--mu);font-size:11px">{{ t.dur }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:12px">
+            <sc-for list="{{ journeySegs }}" as="s" hint-placeholder-count="3">
+              <button onClick="{{ s.onTap }}" style="flex:1;border:0;border-radius:9px;padding:9px 4px;font:600 12px Outfit;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ jTracker }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px"><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Latest R</div><div style="font:500 26px Newsreader,serif;color:{{ trkColor }};margin-top:4px">{{ trkLatest }}</div></div>
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px"><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Since start</div><div style="font:500 26px Newsreader,serif;margin-top:4px">{{ trkDelta }}</div></div>
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px"><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Entries</div><div style="font:500 26px Newsreader,serif;margin-top:4px">{{ trkCount }}</div></div>
+            </div>
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Resistance progression</div>
+              <div style="position:relative;height:160px;margin-top:14px;display:flex;align-items:flex-end;gap:8px">
+                <div style="position:absolute;left:0;right:0;top:40%;border-top:1px dashed var(--bd)"></div>
+                <div style="position:absolute;right:0;top:calc(40% - 16px);font:500 10px Outfit;color:var(--mu)">R 1.5 · fortified</div>
+                <sc-for list="{{ trkBars }}" as="b" hint-placeholder-count="5">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
+                    <div style="font:600 11px Outfit;color:{{ b.color }}">{{ b.r }}</div>
+                    <div style="width:100%;max-width:40px;border-radius:6px 6px 2px 2px;background:{{ b.color }};height:{{ b.pct }}"></div>
+                    <div style="font:500 10px Outfit;color:var(--mu)">{{ b.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Variables moved</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                <sc-for list="{{ varMoves }}" as="m" hint-placeholder-count="3">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font:500 13px Outfit"><span><span style="color:{{ m.color }};font-weight:600">{{ m.k }}</span> {{ m.label }}</span><span style="color:var(--mu)">{{ m.moves }} moves · net {{ m.net }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ jJournal }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">New entry · {{ today }}</div>
+              <div style="display:flex;gap:8px">
+                <select value="{{ entryCat }}" onChange="{{ setEntryCat }}" style="flex:1;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px;font:500 13px Outfit"><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select>
+                <select value="{{ entryVar }}" onChange="{{ setEntryVar }}" style="flex:1;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px;font:500 13px Outfit"><sc-for list="{{ varOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.k }}">{{ o.k }} · {{ o.label }}</option></sc-for></select>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;font:500 13px Outfit;color:var(--mu)">
+                <span>Moved from</span>
+                <input type="number" min="1" max="10" value="{{ entryFrom }}" onChange="{{ setEntryFrom }}" style="width:56px;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:9px;font:600 14px Outfit;text-align:center">
+                <span>to</span>
+                <input type="number" min="1" max="10" value="{{ entryTo }}" onChange="{{ setEntryTo }}" style="width:56px;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:9px;font:600 14px Outfit;text-align:center">
+              </div>
+              <textarea value="{{ entryText }}" onChange="{{ setEntryText }}" rows="3" placeholder="What happened. Where God showed up." style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:400 14px/1.4 Outfit;resize:none"></textarea>
+              <textarea value="{{ entryPrayer }}" onChange="{{ setEntryPrayer }}" rows="2" placeholder="Prayer / reflection" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:italic 400 14px/1.4 Newsreader,serif;resize:none"></textarea>
+              <button onClick="{{ saveEntry }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:12px;font:600 14px Outfit">Record entry</button>
+            </div>
+            <sc-for list="{{ journalList }}" as="j" hint-placeholder-count="4">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font:500 12px Outfit;color:var(--mu)"><span>{{ j.date }} · <span style="color:{{ j.hue }};font-weight:600">{{ j.catName }}</span></span><span style="color:{{ j.color }};font-weight:600">R {{ j.r }}</span></div>
+                <div style="font:500 15px Newsreader,serif">{{ j.move }}</div>
+                <div style="font:400 14px/1.5 Outfit">{{ j.text }}</div>
+                <sc-if value="{{ j.hasPrayer }}" hint-placeholder-val="{{ false }}"><div style="font:italic 400 14px/1.5 Newsreader,serif;color:var(--mu);border-left:2px solid var(--bd);padding-left:10px">{{ j.prayer }}</div></sc-if>
+              </div>
+            </sc-for>
+          </sc-if>
+
+          <sc-if value="{{ jSabbath }}" hint-placeholder-val="{{ false }}">
+            <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Honest diagnosis of the week with God before the next one begins. Five questions. No rush.</div>
+            <sc-for list="{{ sabbathQs }}" as="q" hint-placeholder-count="5">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;gap:10px;align-items:baseline"><span style="font:500 20px Newsreader,serif;color:var(--ac)">{{ q.n }}</span><span style="font:500 16px/1.3 Newsreader,serif">{{ q.q }}</span></div>
+                <textarea value="{{ q.val }}" onChange="{{ q.set }}" rows="2" placeholder="…" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:400 14px/1.4 Outfit;resize:none"></textarea>
+              </div>
+            </sc-for>
+            <button onClick="{{ sealWeek }}" style="border:0;background:{{ sealBg }};color:{{ sealFg }};border-radius:12px;padding:14px;font:600 14px Outfit">{{ sealLabel }}</button>
+          </sc-if>
+        </sc-if>
+
+        <!-- ================= BATTLE ================= -->
+        <sc-if value="{{ isBattle }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:12px">
+            <sc-for list="{{ battleSegs }}" as="s" hint-placeholder-count="3">
+              <button onClick="{{ s.onTap }}" style="flex:1;border:0;border-radius:9px;padding:9px 4px;font:600 12px Outfit;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ bProtocol }}" hint-placeholder-val="{{ true }}">
+            <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Jehoshaphat put the singers in front of the army. Put the armor on before the fight. 2 Chronicles 20:21</div>
+            <div style="display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px 2px">
+              <sc-for list="{{ protoChips }}" as="f" hint-placeholder-count="12">
+                <button onClick="{{ f.onTap }}" style="flex:none;padding:7px 12px;border-radius:999px;border:1px solid {{ f.border }};font:500 12px Outfit;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+              </sc-for>
+            </div>
+            <sc-for list="{{ armorSteps }}" as="a" hint-placeholder-count="3">
+              <button onClick="{{ a.onTap }}" style="text-align:left;background:var(--s1);border:1px solid {{ a.border }};border-radius:16px;padding:16px;color:var(--fg);display:flex;gap:14px;align-items:flex-start">
+                <div style="width:26px;height:26px;border-radius:999px;border:2px solid {{ a.border }};background:{{ a.dotBg }};color:var(--acfg);display:flex;align-items:center;justify-content:center;font:700 13px Outfit;flex:none;margin-top:2px">{{ a.mark }}</div>
+                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">{{ a.kind }}</div>
+                  <div style="font:400 17px/1.45 Newsreader,serif">{{ a.text }}</div>
+                  <sc-if value="{{ a.hasRef }}" hint-placeholder-val="{{ false }}"><div style="font:600 12px Outfit;color:var(--ac)">{{ a.ref }}</div></sc-if>
+                </div>
+              </button>
+            </sc-for>
+            <div style="background:{{ armorBg }};color:{{ armorFg }};border-radius:14px;padding:14px;text-align:center;font:600 14px Outfit;transition:background .3s">{{ armorLabel }}</div>
+          </sc-if>
+
+          <sc-if value="{{ bDebrief }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ dbSteps }}" as="d" hint-placeholder-count="3">
+                <div style="flex:1;height:4px;border-radius:2px;background:{{ d.color }}"></div>
+              </sc-for>
+            </div>
+            <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Not condemnation. Reconstruction. Romans 8:1 first, then the diagnosis.</div>
+
+            <sc-if value="{{ db1 }}" hint-placeholder-val="{{ true }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)">Step 1 · Name the trigger</div>
+                <select value="{{ dbCat }}" onChange="{{ setDbCat }}" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px;font:500 14px Outfit"><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select>
+                <textarea value="{{ dbTrigger }}" onChange="{{ setDbTrigger }}" rows="4" placeholder="Where were you. What time. Who was or was not there. What happened right before." style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:400 14px/1.45 Outfit;resize:none"></textarea>
+                <button onClick="{{ dbNext }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:12px;font:600 14px Outfit">Score the moment →</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ db2 }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)">Step 2 · Variables at the moment of the fall</div>
+                <div style="display:flex;align-items:baseline;gap:10px"><div style="font:500 48px/1 Newsreader,serif;color:{{ dbColor }}">{{ dbR }}</div><div style="font:600 12px Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ dbColor }}">{{ dbStatus }}</div></div>
+              </div>
+              <sc-for list="{{ dbVars }}" as="v" hint-placeholder-count="6">
+                <div style="background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:10px 14px">
+                  <div style="display:flex;justify-content:space-between;font:500 14px Outfit"><span><span style="color:{{ v.color }};font-weight:600">{{ v.k }}</span> {{ v.label }}</span><span style="font:600 15px Newsreader,serif">{{ v.val }}</span></div>
+                  <input type="range" min="1" max="10" value="{{ v.val }}" onChange="{{ v.set }}" style="width:100%;margin:10px 0 4px;--thumb:{{ v.color }};background:linear-gradient(90deg,{{ v.color }} {{ v.pct }},var(--s2) {{ v.pct }})">
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ dbBack }}" style="flex:1;border:1px solid var(--bd);background:none;color:var(--fg);border-radius:10px;padding:12px;font:600 14px Outfit">Back</button>
+                <button onClick="{{ dbNext }}" style="flex:2;border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:12px;font:600 14px Outfit">What to rebuild →</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ db3 }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)">Step 3 · Rebuild first</div>
+                <div style="font:500 26px/1.15 Newsreader,serif">{{ dbLevLabel }}</div>
+                <div style="font:400 14px/1.5 Outfit;color:var(--mu)">{{ dbLevText }}</div>
+                <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)">Action step</div><div style="font:400 15px/1.5 Newsreader,serif;margin-top:4px">{{ dbAction }}</div></div>
+                <div style="border-left:2px solid var(--ac);padding-left:12px"><div style="font:italic 400 15px/1.5 Newsreader,serif">{{ dbVerse }}</div><div style="font:600 12px Outfit;color:var(--ac);margin-top:4px">{{ dbVerseRef }}</div></div>
+              </div>
+              <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Gospel-framed summary for {{ partnerName }}</div>
+                <div style="font:400 14px/1.5 Newsreader,serif;background:var(--s2);border-radius:10px;padding:12px">{{ dbShareText }}</div>
+                <div style="display:flex;gap:8px">
+                  <button onClick="{{ dbSaveJournal }}" style="flex:1;border:1px solid var(--bd);background:none;color:var(--fg);border-radius:10px;padding:12px;font:600 13px Outfit">Save to journal</button>
+                  <button onClick="{{ dbShare }}" style="flex:1;border:0;background:{{ dbShareBg }};color:{{ dbShareFg }};border-radius:10px;padding:12px;font:600 13px Outfit">{{ dbShareLabel }}</button>
+                </div>
+                <button onClick="{{ dbReset }}" style="border:0;background:none;color:var(--mu);font:500 13px Outfit;padding:6px">Start a new debrief</button>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ bScenario }}" hint-placeholder-val="{{ false }}">
+            <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Three scenarios, one question: which single variable change buys the most resistance?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <sc-for list="{{ scnTabs }}" as="s" hint-placeholder-count="3">
+                <button onClick="{{ s.onTap }}" style="border:1px solid {{ s.border }};background:{{ s.bg }};color:var(--fg);border-radius:14px;padding:12px 10px;text-align:left">
+                  <div style="font:600 11px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">{{ s.name }}</div>
+                  <div style="font:500 24px/1 Newsreader,serif;color:{{ s.color }};margin-top:6px">{{ s.r }}</div>
+                  <div style="font:600 10px Outfit;letter-spacing:.06em;text-transform:uppercase;color:{{ s.color }};margin-top:4px">{{ s.status }}</div>
+                </button>
+              </sc-for>
+            </div>
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+              <input value="{{ scnName }}" onChange="{{ setScnName }}" style="border:0;background:none;padding:0;font:500 20px Newsreader,serif;color:var(--fg)">
+              <sc-for list="{{ scnVars }}" as="v" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;gap:10px;font:500 13px Outfit">
+                  <span style="width:20px;color:{{ v.color }};font-weight:700">{{ v.k }}</span>
+                  <input type="range" min="1" max="10" value="{{ v.val }}" onChange="{{ v.set }}" style="flex:1;margin:0;--thumb:{{ v.color }};background:linear-gradient(90deg,{{ v.color }} {{ v.pct }},var(--s2) {{ v.pct }})">
+                  <span style="width:18px;text-align:right;font:600 14px Newsreader,serif">{{ v.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Leverage analysis · one point each</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+                <sc-for list="{{ levRows }}" as="l" hint-placeholder-count="6">
+                  <div style="display:flex;align-items:center;gap:10px;font:500 13px Outfit">
+                    <span style="width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:{{ l.color }};font-weight:700">{{ l.k }}</span> {{ l.dir }}</span>
+                    <div style="flex:1;height:10px;background:var(--s2);border-radius:5px;overflow:hidden"><div style="height:100%;background:{{ l.barColor }};width:{{ l.pct }}"></div></div>
+                    <span style="width:44px;text-align:right;color:{{ l.barColor }};font-weight:600">{{ l.gain }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:12px;font:400 13px/1.5 Outfit;background:var(--s2);border-radius:10px;padding:10px 12px"><span style="color:var(--ac);font-weight:600">Highest leverage: </span>{{ scnLevText }}</div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- ================= COMMUNITY ================= -->
+        <sc-if value="{{ isCommunity }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:6px;background:var(--s2);padding:4px;border-radius:12px">
+            <sc-for list="{{ tierSegs }}" as="s" hint-placeholder-count="4">
+              <button onClick="{{ s.onTap }}" style="flex:1;border:0;border-radius:9px;padding:9px 2px;font:600 12px Outfit;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font:400 14px/1.5 Outfit;color:var(--mu)">{{ tierBlurb }}</div>
+
+          <!-- Tier I -->
+          <sc-if value="{{ t1 }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Accountability partner</div><div style="font:500 22px/1.2 Newsreader,serif;margin-top:4px">{{ partnerName }}</div></div>
+                <div style="font:600 11px Outfit;letter-spacing:.06em;background:var(--s2);border-radius:999px;padding:6px 10px;color:var(--mu)">Room {{ partnerCode }}</div>
+              </div>
+              <sc-if value="{{ partnerDark }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--s2);border-left:3px solid var(--warn);border-radius:10px;padding:10px 12px;font:400 13px/1.45 Outfit"><span style="color:var(--warn);font-weight:600">Gone quiet.</span> No check-in from {{ partnerName }} in {{ partnerDays }} days. Silence is a data point.</div>
+              </sc-if>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div><div style="font:500 12px Outfit;color:var(--mu);margin-bottom:6px">{{ partnerName }} · 7 wk</div><div style="display:flex;align-items:flex-end;gap:3px;height:44px"><sc-for list="{{ partnerBars }}" as="b" hint-placeholder-count="7"><div style="flex:1;border-radius:2px;background:{{ b.color }};height:{{ b.pct }}"></div></sc-for></div></div>
+                <div><div style="font:500 12px Outfit;color:var(--mu);margin-bottom:6px">You · 7 wk</div><div style="display:flex;align-items:flex-end;gap:3px;height:44px"><sc-for list="{{ myBars }}" as="b" hint-placeholder-count="7"><div style="flex:1;border-radius:2px;background:{{ b.color }};height:{{ b.pct }}"></div></sc-for></div></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ sendCheckin }}" style="flex:1;border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:12px;font:600 13px Outfit">Send prayer check-in</button>
+                <button onClick="{{ nudge }}" style="flex:1;border:1px solid var(--bd);background:none;color:var(--fg);border-radius:10px;padding:12px;font:600 13px Outfit">Nudge</button>
+              </div>
+              <div style="font:400 12px Outfit;color:var(--mu)">{{ checkinNote }}</div>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Covenant witnessing</div><div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:{{ covColor }}">{{ covStatus }}</div></div>
+              <input value="{{ covTitle }}" onChange="{{ setCovTitle }}" style="border:0;background:none;padding:0;font:500 22px Newsreader,serif;color:var(--fg)">
+              <textarea value="{{ covBody }}" onChange="{{ setCovBody }}" rows="3" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:italic 400 15px/1.45 Newsreader,serif;resize:none"></textarea>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="border-top:1px solid var(--fg);padding-top:6px"><div style="font:italic 500 16px Newsreader,serif">You</div><div style="font:500 11px Outfit;color:var(--mu)">Signed · {{ today }}</div></div>
+                <div style="border-top:1px solid {{ covLineColor }};padding-top:6px"><div style="font:italic 500 16px Newsreader,serif;color:{{ covSigColor }}">{{ covSig }}</div><div style="font:500 11px Outfit;color:var(--mu)">{{ covSigNote }}</div></div>
+              </div>
+              <button onClick="{{ sendCovenant }}" style="border:0;background:{{ covBtnBg }};color:{{ covBtnFg }};border-radius:10px;padding:12px;font:600 13px Outfit">{{ covBtnLabel }}</button>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Shared debriefs</div>
+              <sc-if value="{{ noShares }}" hint-placeholder-val="{{ true }}"><div style="font:400 13px/1.5 Outfit;color:var(--mu)">Nothing shared yet. Finish a Post-Fall Debrief in Battle and send the gospel-framed summary here, structured confession instead of the awkward text.</div></sc-if>
+              <sc-for list="{{ shares }}" as="s" hint-placeholder-count="0">
+                <div style="background:var(--s2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;justify-content:space-between;font:500 12px Outfit;color:var(--mu)"><span>{{ s.date }} · <span style="color:var(--ac)">{{ s.catName }}</span></span><span>Read by {{ partnerName }}</span></div>
+                  <div style="font:400 14px/1.5 Newsreader,serif">{{ s.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- Tier II -->
+          <sc-if value="{{ t2 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end">
+                <div><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Battle room</div><div style="font:500 22px/1.2 Newsreader,serif;margin-top:4px">{{ groupName }}</div></div>
+                <div style="text-align:right"><div style="font:500 26px/1 Newsreader,serif;color:{{ groupColor }}">{{ groupR }}</div><div style="font:600 10px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)">aggregate R</div></div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:4px;height:48px"><sc-for list="{{ groupBars }}" as="b" hint-placeholder-count="7"><div style="flex:1;border-radius:3px;background:{{ b.color }};height:{{ b.pct }}"></div></sc-for></div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ groupMembers }}" as="m" hint-placeholder-count="6">
+                  <div style="display:flex;align-items:center;gap:10px;font:500 13px Outfit">
+                    <div style="width:30px;height:30px;border-radius:999px;background:var(--s2);display:flex;align-items:center;justify-content:center;font:600 11px Outfit;color:var(--mu)">{{ m.initials }}</div>
+                    <span style="flex:1">{{ m.name }}</span>
+                    <span style="color:{{ m.hue }};font-weight:600">{{ m.catName }}</span>
+                    <span style="width:40px;text-align:right;color:{{ m.color }};font-weight:600">{{ m.r }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:var(--s2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px">
+                <div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)">This week's shared category</div>
+                <div style="font:500 18px Newsreader,serif">{{ groupCatName }} · {{ groupCatEq }}</div>
+                <div style="font:400 13px/1.5 Outfit;color:var(--mu);margin-top:4px">Collective Sabbath question: <span style="color:var(--fg)">{{ groupQ }}</span></div>
+              </div>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Communal Scripture memory board</div><div style="font:500 13px Outfit;color:var(--ac)">{{ boardCount }} verses pooled</div></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ boardVerses }}" as="v" hint-placeholder-count="7">
+                  <div style="display:flex;align-items:center;gap:6px;background:var(--s2);border-radius:999px;padding:6px 10px 6px 6px;font:500 12px Outfit"><span style="width:20px;height:20px;border-radius:999px;background:var(--ac);color:var(--acfg);display:flex;align-items:center;justify-content:center;font:700 9px Outfit">{{ v.by }}</span>{{ v.ref }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:8px">
+                <input value="{{ myVerse }}" onChange="{{ setMyVerse }}" placeholder="Add a verse you have memorized" style="flex:1;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:500 13px Outfit">
+                <button onClick="{{ addVerse }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:10px 14px;font:600 13px Outfit">Pool it</button>
+              </div>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Scenario challenge · posted by {{ chBy }}</div>
+              <div style="font:500 18px/1.2 Newsreader,serif">{{ chCatName }} scenario. Which single variable would you move first?</div>
+              <div style="display:flex;gap:5px">
+                <sc-for list="{{ chBars }}" as="b" hint-placeholder-count="6">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+                    <div style="width:100%;height:36px;display:flex;align-items:flex-end;background:var(--s2);border-radius:3px"><div style="width:100%;border-radius:3px;background:{{ b.color }};height:{{ b.pct }}"></div></div>
+                    <div style="font:600 10px Outfit;color:var(--mu)">{{ b.k }}{{ b.val }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+                <sc-for list="{{ chOptions }}" as="o" hint-placeholder-count="6">
+                  <button onClick="{{ o.onTap }}" style="border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.fg }};border-radius:10px;padding:10px 6px;font:600 12px Outfit">{{ o.k }} · {{ o.short }}</button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ chAnswered }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--s2);border-radius:12px;padding:12px;font:400 13px/1.5 Outfit"><span style="font-weight:600;color:{{ chVerdictColor }}">{{ chVerdict }}</span> {{ chExplain }}</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <sc-for list="{{ chResults }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;justify-content:space-between;font:500 13px Outfit"><span>{{ r.name }}</span><span style="color:{{ r.color }};font-weight:600">picked {{ r.pick }}</span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- Tier III -->
+          <sc-if value="{{ t3 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end">
+                <div><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Pastoral dashboard · anonymized</div><div style="font:500 22px/1.2 Newsreader,serif;margin-top:4px">{{ churchName }}</div></div>
+                <div style="font:500 12px Outfit;color:var(--mu);text-align:right">{{ churchOptIn }} of {{ churchMembers }}<br>opted in</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Falls · 7 days</div><div style="font:500 26px Newsreader,serif;color:var(--bad);margin-top:4px">{{ churchFalls }}</div></div>
+                <div style="background:var(--s2);border-radius:12px;padding:12px"><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Debriefs completed</div><div style="font:500 26px Newsreader,serif;color:var(--ok);margin-top:4px">{{ churchDebriefs }}</div></div>
+              </div>
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Category pressure · vs last week</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ spikes }}" as="s" hint-placeholder-count="6">
+                  <div style="display:flex;align-items:center;gap:10px;font:500 13px Outfit">
+                    <span style="width:78px;color:{{ s.hue }};font-weight:600">{{ s.name }}</span>
+                    <div style="flex:1;height:10px;background:var(--s2);border-radius:5px;overflow:hidden"><div style="height:100%;background:{{ s.hue }};width:{{ s.pct }}"></div></div>
+                    <span style="width:26px;text-align:right">{{ s.now }}</span>
+                    <span style="width:36px;text-align:right;color:{{ s.color }};font-weight:600">{{ s.delta }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:var(--s2);border-radius:12px;padding:12px;font:400 13px/1.5 Outfit"><span style="color:var(--ac);font-weight:600">Sermon signal: </span>{{ sermonSignal }}</div>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Guided cohort</div><div style="font:500 12px Outfit;color:var(--mu)">{{ cohortEnrolled }} enrolled</div></div>
+              <div style="font:500 22px/1.2 Newsreader,serif">{{ cohortName }}</div>
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--ac);width:{{ cohortPct }}"></div></div><span style="font:600 12px Outfit;color:var(--mu)">Day {{ cohortDay }} / 40</span></div>
+              <div style="background:var(--s2);border-left:4px solid {{ cohortHue }};border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:600 11px Outfit;letter-spacing:.06em;text-transform:uppercase;color:{{ cohortHue }}">Today · {{ cohortCatName }}</div>
+                <div style="font:italic 400 16px/1.5 Newsreader,serif">{{ cohortVerse }}</div>
+                <div style="font:600 12px Outfit;color:var(--ac)">{{ cohortVerseRef }}</div>
+                <div style="font:400 13px/1.5 Outfit;color:var(--mu)">Reflection: {{ cohortPrompt }}</div>
+              </div>
+              <button onClick="{{ completeDay }}" style="border:0;background:{{ cohortBtnBg }};color:{{ cohortBtnFg }};border-radius:10px;padding:12px;font:600 13px Outfit">{{ cohortBtnLabel }}</button>
+            </div>
+
+            <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Prayer requests · routed to opted-in intercessors</div>
+              <sc-for list="{{ prayers }}" as="p" hint-placeholder-count="3">
+                <div style="background:var(--s2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;justify-content:space-between;font:500 12px Outfit;color:var(--mu)"><span style="color:{{ p.hue }};font-weight:600">{{ p.catName }}</span><span>{{ p.ago }}</span></div>
+                  <div style="font:400 15px/1.45 Newsreader,serif">{{ p.text }}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px Outfit;color:var(--mu)">{{ p.count }} interceding</span><button onClick="{{ p.onTap }}" style="border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.fg }};border-radius:999px;padding:7px 12px;font:600 12px Outfit">{{ p.label }}</button></div>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px">
+                <select value="{{ prayerCat }}" onChange="{{ setPrayerCat }}" style="border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px;font:500 13px Outfit"><sc-for list="{{ catOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select>
+                <input value="{{ prayerText }}" onChange="{{ setPrayerText }}" placeholder="Your request, brief" style="flex:1;min-width:0;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:500 13px Outfit">
+                <button onClick="{{ submitPrayer }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:10px 12px;font:600 13px Outfit">Send</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Tier IV -->
+          <sc-if value="{{ t4 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Testimony wall · anonymous</div><button onClick="{{ shareTestimony }}" style="border:1px solid var(--bd);background:var(--s1);color:var(--fg);border-radius:999px;padding:7px 12px;font:600 12px Outfit">Share yours</button></div>
+            <sc-for list="{{ testimonies }}" as="t" hint-placeholder-count="3">
+              <div style="background:var(--s1);border:1px solid var(--bd);border-left:4px solid {{ t.hue }};border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;font:500 12px Outfit;color:var(--mu)"><span style="color:{{ t.hue }};font-weight:600">{{ t.catName }}</span><span>{{ t.ago }}</span></div>
+                <div><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Trigger</div><div style="font:400 15px/1.45 Newsreader,serif;margin-top:2px">{{ t.trigger }}</div></div>
+                <div><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Variables moved</div><div style="font:600 14px Outfit;color:var(--ok);margin-top:2px">{{ t.vars }}</div></div>
+                <div><div style="font:600 10px Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)">Rebuilt</div><div style="font:400 15px/1.45 Newsreader,serif;margin-top:2px">{{ t.rebuilt }}</div></div>
+              </div>
+            </sc-for>
+
+            <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-top:6px">Category prayer rooms</div>
+            <sc-if value="{{ noRoom }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                <sc-for list="{{ rooms }}" as="r" hint-placeholder-count="12">
+                  <button onClick="{{ r.onTap }}" style="border:1px solid color-mix(in oklab,{{ r.hue }} 35%,var(--bd));background:linear-gradient(160deg,color-mix(in oklab,{{ r.hue }} 24%,var(--s1)),var(--s1));color:var(--fg);border-radius:14px;padding:12px 10px;text-align:left">
+                    <div style="font:500 16px Newsreader,serif">{{ r.name }}</div>
+                    <div style="display:flex;align-items:center;gap:5px;margin-top:6px;font:500 11px Outfit;color:var(--mu)"><span style="width:6px;height:6px;border-radius:999px;background:{{ r.hue }}"></span>{{ r.count }} praying now</div>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ inRoom }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ leaveRoom }}" style="align-self:flex-start;background:none;border:0;color:var(--mu);font:500 13px Outfit;padding:0">← All rooms</button>
+              <div style="font:500 24px/1.1 Newsreader,serif;color:{{ roomHue }}">{{ roomName }} room <span style="font:500 13px Outfit;color:var(--mu)">· {{ roomCount }} present</span></div>
+              <sc-for list="{{ roomPosts }}" as="p" hint-placeholder-count="3">
+                <div style="background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px">
+                  <div style="font:400 15px/1.45 Newsreader,serif">{{ p.text }}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12px Outfit;color:var(--mu)">Anonymous · {{ p.ago }}</span><button onClick="{{ p.onTap }}" style="border:1px solid {{ p.border }};background:{{ p.bg }};color:{{ p.fg }};border-radius:999px;padding:7px 12px;font:600 12px Outfit">{{ p.label }}</button></div>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px">
+                <input value="{{ roomDraft }}" onChange="{{ setRoomDraft }}" placeholder="Brief, anonymous request" style="flex:1;min-width:0;border:1px solid var(--bd);background:var(--s2);border-radius:10px;padding:10px 12px;font:500 13px Outfit">
+                <button onClick="{{ postRoom }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:10px;padding:10px 12px;font:600 13px Outfit">Post</button>
+              </div>
+            </sc-if>
+          </sc-if>
+        </sc-if>
+      </div>
+
+      <!-- Emergency FAB -->
+      <button onClick="{{ openEmergency }}" style="position:absolute;right:16px;bottom:94px;height:38px;padding:0 14px 0 11px;border-radius:999px;border:0;background:var(--bad);color:#fff;font:700 11px Outfit;letter-spacing:.06em;display:flex;align-items:center;gap:7px;box-shadow:var(--sh);z-index:5">
+        <span style="width:8px;height:8px;border-radius:999px;background:#fff;animation:gf-pulse 1.6s ease-in-out infinite"></span>EMERGENCY
+      </button>
+
+      <!-- Tab bar -->
+      <div style="position:absolute;left:0;right:0;bottom:0;padding:8px 8px 28px;background:var(--s1);border-top:1px solid var(--bd);display:flex;z-index:4">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.onTap }}" style="flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;color:{{ t.color }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.d }}"></path></svg>
+            <span style="font:600 10px Outfit;letter-spacing:.04em">{{ t.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <!-- Settings overlay -->
+      <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeSettings }}" style="position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end">
+          <div onClick="{{ stop }}" style="width:100%;background:var(--s1);border-radius:24px 24px 0 0;padding:20px 20px 40px;display:flex;flex-direction:column;gap:16px;color:var(--fg)">
+            <div style="font:500 24px Newsreader,serif">Settings</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font:500 15px Outfit">UI scale</div><div style="font:400 12px Outfit;color:var(--mu)">Larger text across the whole app</div></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button onClick="{{ scaleDown }}" style="width:38px;height:38px;border-radius:999px;border:1px solid var(--bd);background:var(--s2);color:var(--fg);font:600 16px Outfit">−</button>
+                <span style="font:600 14px Outfit;width:44px;text-align:center">{{ scalePct }}</span>
+                <button onClick="{{ scaleUp }}" style="width:38px;height:38px;border-radius:999px;border:1px solid var(--bd);background:var(--s2);color:var(--fg);font:600 16px Outfit">+</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font:500 15px Outfit">Appearance</div><div style="font:400 12px Outfit;color:var(--mu)">Forge-lit dark or parchment light</div></div>
+              <button onClick="{{ toggleTheme }}" style="border:1px solid var(--bd);background:var(--s2);color:var(--fg);border-radius:999px;padding:9px 14px;font:600 13px Outfit">{{ themeLabel }}</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font:500 15px Outfit">Share R-score with partner</div><div style="font:400 12px Outfit;color:var(--mu)">{{ partnerName }} sees your weekly trend</div></div>
+              <button onClick="{{ toggleShare }}" style="width:52px;height:30px;border-radius:999px;border:0;background:{{ shareBg }};position:relative"><span style="position:absolute;top:3px;left:{{ shareKnob }};width:24px;height:24px;border-radius:999px;background:#fff;transition:left .2s"></span></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font:500 15px Outfit">Church aggregate opt-in</div><div style="font:400 12px Outfit;color:var(--mu)">Anonymized. Pastors never see names.</div></div>
+              <button onClick="{{ toggleOptIn }}" style="width:52px;height:30px;border-radius:999px;border:0;background:{{ optBg }};position:relative"><span style="position:absolute;top:3px;left:{{ optKnob }};width:24px;height:24px;border-radius:999px;background:#fff;transition:left .2s"></span></button>
+            </div>
+            <div style="font:400 11px Outfit;color:var(--mu);text-align:center">GraceForge Beta v10 · Romans 12:1–2</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Emergency overlay -->
+      <sc-if value="{{ emOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:var(--bg);z-index:30;display:flex;flex-direction:column;padding:66px 20px 40px;gap:16px;color:var(--fg)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;gap:6px"><sc-for list="{{ emDots }}" as="d" hint-placeholder-count="4"><div style="width:22px;height:4px;border-radius:2px;background:{{ d.color }}"></div></sc-for></div>
+            <button onClick="{{ closeEmergency }}" style="border:0;background:var(--s1);color:var(--fg);border-radius:999px;padding:8px 14px;font:600 12px Outfit">Close</button>
+          </div>
+          <sc-if value="{{ em0 }}" hint-placeholder-val="{{ true }}">
+            <div style="font:500 30px/1.1 Newsreader,serif">What is coming at you right now?</div>
+            <div style="font:400 14px/1.5 Outfit;color:var(--mu)">Name it. Named enemies are smaller.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;overflow:auto">
+              <sc-for list="{{ emCats }}" as="c" hint-placeholder-count="12"><button onClick="{{ c.onTap }}" style="border:1px solid color-mix(in oklab,{{ c.hue }} 40%,var(--bd));background:linear-gradient(160deg,color-mix(in oklab,{{ c.hue }} 30%,var(--s1)),var(--s1));color:var(--fg);border-radius:14px;padding:16px 8px;font:500 17px Newsreader,serif">{{ c.name }}</button></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ em1 }}" hint-placeholder-val="{{ false }}">
+            <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ emHue }}">{{ emCatName }} · breathing prayer</div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px">
+              <div style="width:200px;height:200px;border-radius:999px;background:radial-gradient(circle at 40% 35%,color-mix(in oklab,{{ emHue }} 60%,white),{{ emHue }});opacity:.95;transition:transform 3.6s ease-in-out;transform:{{ breathTransform }}"></div>
+              <div style="font:500 30px/1.1 Newsreader,serif">{{ breathLabel }}</div>
+              <div style="font:italic 400 18px/1.4 Newsreader,serif;color:var(--mu);text-align:center">{{ breathLine }}</div>
+            </div>
+            <button onClick="{{ emNext }}" style="border:0;background:var(--s1);color:var(--fg);border-radius:14px;padding:16px;font:600 15px Outfit;border:1px solid var(--bd)">I am steadier. Give me the Word →</button>
+          </sc-if>
+          <sc-if value="{{ em2 }}" hint-placeholder-val="{{ false }}">
+            <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ emHue }}">{{ emCatName }} · Scripture and prayer</div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px">
+              <div style="font:400 30px/1.3 Newsreader,serif">{{ emVerse }}</div>
+              <div style="font:600 14px Outfit;color:var(--ac)">{{ emVerseRef }}</div>
+              <div style="border-left:2px solid var(--ac);padding-left:14px;font:italic 400 20px/1.45 Newsreader,serif;color:var(--mu)">{{ emPrayer }}</div>
+            </div>
+            <button onClick="{{ emNext }}" style="border:0;background:var(--ac);color:var(--acfg);border-radius:14px;padding:16px;font:600 15px Outfit">Prayed it. What do I do →</button>
+          </sc-if>
+          <sc-if value="{{ em3 }}" hint-placeholder-val="{{ false }}">
+            <div style="font:600 11px/1 Outfit;letter-spacing:.08em;text-transform:uppercase;color:{{ emHue }}">{{ emCatName }} · one action</div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px">
+              <div style="font:500 32px/1.25 Newsreader,serif">{{ emAction }}</div>
+              <div style="font:400 15px/1.5 Outfit;color:var(--mu)">Then tell someone. Isolation is the denominator in every fall.</div>
+              <button onClick="{{ emTellPartner }}" style="border:1px solid var(--bd);background:var(--s1);color:var(--fg);border-radius:14px;padding:16px;font:600 15px Outfit;text-align:left">Text {{ partnerName }} one word: “Fighting.”</button>
+            </div>
+            <button onClick="{{ emDone }}" style="border:0;background:var(--ok);color:#0b1a0c;border-radius:14px;padding:16px;font:600 15px Outfit">Stood. Log it and close</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:20px;right:20px;bottom:160px;z-index:40;background:var(--fg);color:var(--bg);border-radius:12px;padding:12px 16px;font:500 13px Outfit;text-align:center;box-shadow:var(--sh)">{{ toast }}</div>
+      </sc-if>
+    </div>
+  </x-import>
+  <div style="max-width:402px;width:100%;font:400 12px/1.5 Outfit;color:var(--mu);text-align:center">Tabs: Guide · Equip · Journey · Battle · Community (Tiers I–IV). Emergency and Settings are always available. State persists on this device.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;guide&quot;,&quot;options&quot;:[&quot;guide&quot;,&quot;equip&quot;,&quot;journey&quot;,&quot;battle&quot;,&quot;community&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;partnerQuiet&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+class Component extends DCLogic {
+  state = {
+    loaded: false, theme: 'dark', scale: 1, tab: 'guide', settings: false, toast: '', shareR: true, optIn: true,
+    guideView: 'list', guideCat: 'pride', guideSub: 'eq',
+    scores: { fear: { G: 7, S: 7, C: 6, I: 4, T: 6, X: 5 }, anger: { G: 7, S: 6, C: 4, I: 5, T: 7, X: 6 }, pride: { G: 5, S: 4, C: 4, I: 6, T: 5, X: 7 } },
+    equipSub: 'cards', cardFilter: 'all', cardIdx: 0, flipped: false, mastered: {}, customCards: [], adding: false, newCard: { ref: '', text: '', cat: 'pride' },
+    journeySub: 'tracker', journal: [], entry: { cat: 'fear', v: 'G', from: 5, to: 6, text: '', prayer: '' }, sabbath: ['', '', '', '', ''], sealed: false,
+    playing: false, track: 0, pos: 0,
+    battleSub: 'protocol', protoCat: 'fear', armor: [false, false, false],
+    dbStep: 1, dbCat: 'fear', dbTrigger: '', dbScores: { G: 4, S: 4, C: 3, I: 7, T: 8, X: 8 }, dbShared: false, dbSaved: false,
+    scnIdx: 0, scenarios: [
+      { name: 'Late night, alone', scores: { G: 4, S: 5, C: 2, I: 9, T: 8, X: 7 } },
+      { name: 'Same night, partner texted', scores: { G: 6, S: 5, C: 7, I: 3, T: 8, X: 7 } },
+      { name: 'After the Sabbath review', scores: { G: 8, S: 7, C: 7, I: 3, T: 6, X: 4 } }],
+    tier: 1, checkins: 0, nudged: false, cov: { title: 'Eye Covenant', body: 'I will make no provision for the flesh with my eyes. Job 31:1. Screens leave the bedroom at 10pm.', status: 'draft' }, shares: [],
+    myVerse: '', boardVerses: [], chPick: null,
+    interceding: {}, cohortDone: false, prayerText: '', prayerCat: 'fear', prayers: [],
+    room: null, prayed: {}, roomDraft: '', roomExtra: {},
+    em: false, emPhase: 0, emCat: 'fear', breath: 0,
+  };
+  D = null;
+  componentDidMount() {
+    import('./graceforge-data.js').then(D => {
+      this.D = D;
+      const saved = this.load();
+      this.setState({ loaded: true, tab: this.props.defaultTab || 'guide', journal: D.SEED_JOURNAL.slice(), boardVerses: D.GROUP.verses.slice(), prayers: D.CHURCH.prayers.slice(), ...saved });
+    });
+    this.tick = setInterval(() => this.onTick(), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.tick); clearTimeout(this.tt); clearTimeout(this.covT); }
+  load() { try { return JSON.parse(localStorage.getItem('graceforge.v1') || '{}'); } catch (e) { return {}; } }
+  up(p) { this.setState(p, () => { const s = this.state; localStorage.setItem('graceforge.v1', JSON.stringify({ theme: s.theme, scale: s.scale, scores: s.scores, journal: s.journal, mastered: s.mastered, customCards: s.customCards, boardVerses: s.boardVerses, shares: s.shares, prayers: s.prayers, shareR: s.shareR, optIn: s.optIn })); }); }
+  toast(m) { this.setState({ toast: m }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: '' }), 2400); }
+  onTick() {
+    const s = this.state; if (!this.D) return;
+    if (s.playing) { const dur = this.D.WORSHIP[s.track].dur; if (s.pos + 1 >= dur) this.setState({ track: (s.track + 1) % this.D.WORSHIP.length, pos: 0 }); else this.setState({ pos: s.pos + 1 }); }
+    if (s.em && s.emPhase === 1) this.setState({ breath: (s.breath + 1) % 12 });
+  }
+  HUES = { pride: '#d9483b', lust: '#c8407f', envy: '#3f9d5a', anger: '#e2602a', greed: '#d3a21e', appetite: '#b7702f', sloth: '#7d8fa6', fear: '#5b6fd6', deceit: '#8e5fc4', bitterness: '#2f9494', despair: '#4a86c0', slander: '#dc8226' };
+  TABHUE = { guide: '#d9a520', equip: '#2f9494', journey: '#4a86c0', battle: '#d9483b', community: '#3f9d5a' };
+  hue(id) { return this.HUES[id] || 'var(--ac)'; }
+  pct(v) { return ((v - 1) / 9 * 100).toFixed(0) + '%'; }
+  cat(id) { return this.D.CATEGORIES.find(c => c.id === id) || this.D.CATEGORIES[0]; }
+  scoresFor(id) { return this.state.scores[id] || { G: 5, S: 5, C: 5, I: 5, T: 5, X: 5 }; }
+  vcolor(k) { return this.D.VARS[k].side === 'num' ? 'var(--ok)' : 'var(--bad)'; }
+  scolor(r) { return r < 0.8 ? 'var(--bad)' : r < 1.5 ? 'var(--warn)' : 'var(--ok)'; }
+  fmt(r) { return r.toFixed(2); }
+  bars(sc) { return Object.keys(this.D.VARS).map(k => ({ k, val: sc[k], pct: (sc[k] * 10) + '%', color: this.vcolor(k) })); }
+  seg(items, cur, set) { return items.map(([id, label]) => ({ label, onTap: () => set(id), bg: id === cur ? 'var(--s1)' : 'transparent', fg: id === cur ? 'var(--fg)' : 'var(--mu)' })); }
+  chips(items, cur, set) { return items.map(([id, label, hue]) => ({ label, onTap: () => set(id), hue: hue || 'var(--ac)', bg: id === cur ? (hue || 'var(--ac)') : 'var(--s1)', fg: id === cur ? (hue ? '#fff' : 'var(--acfg)') : 'var(--fg)', border: id === cur ? (hue || 'var(--ac)') : 'var(--bd)' })); }
+  today() { return new Date().toISOString().slice(0, 10); }
+  shortDate(d) { const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; const p = d.split('-'); return m[+p[1] - 1] + ' ' + (+p[2]); }
+  levText(sc) { const D = this.D; const l = D.leverage(sc); if (!l) return 'All variables are maxed.'; const v = D.VARS[l.k]; return `${v.label} ${v.side === 'num' ? 'up' : 'down'} one point takes R from ${this.fmt(D.rScore(sc))} to ${this.fmt(l.r)} (+${this.fmt(l.gain)}).`; }
+  levRows(sc) {
+    const D = this.D; const base = D.rScore(sc); const rows = Object.keys(D.VARS).map(k => { const n = { ...sc }; const num = D.VARS[k].side === 'num'; if (num) n[k] = Math.min(10, sc[k] + 1); else n[k] = Math.max(1, sc[k] - 1); return { k, label: D.VARS[k].label, dir: num ? '+1 ' + D.VARS[k].label : '−1 ' + D.VARS[k].label, g: D.rScore(n) - base, color: this.vcolor(k) }; }).sort((a, b) => b.g - a.g);
+    const max = rows[0].g || 1; return rows.map((r, i) => ({ ...r, gain: '+' + this.fmt(r.g), pct: Math.round(r.g / max * 100) + '%', barColor: i === 0 ? 'var(--ac)' : 'var(--mu)' }));
+  }
+  renderVals() {
+    const s = this.state, D = this.D;
+    const base = { themeName: s.theme, isDark: s.theme === 'dark', themeLabel: s.theme === 'dark' ? 'Light' : 'Dark', toggleTheme: () => this.up({ theme: s.theme === 'dark' ? 'light' : 'dark' }), scale: s.scale, scalePct: Math.round(s.scale * 100) + '%', openSettings: () => this.setState({ settings: true }), closeSettings: () => this.setState({ settings: false }), settingsOpen: s.settings, stop: e => e.stopPropagation(), scaleUp: () => this.up({ scale: Math.min(1.4, +(s.scale + 0.1).toFixed(1)) }), scaleDown: () => this.up({ scale: Math.max(0.8, +(s.scale - 0.1).toFixed(1)) }), hasToast: !!s.toast, toast: s.toast, emOpen: s.em, openEmergency: () => this.setState({ em: true, emPhase: 0, breath: 0 }), closeEmergency: () => this.setState({ em: false }) };
+    if (!D) return base;
+    const TABS = [['guide', 'Guide', 'M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z'], ['equip', 'Equip', 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'], ['journey', 'Journey', 'M4 20V11M10 20V5M16 20v-8M22 20H2'], ['battle', 'Battle', 'M14.5 4.5l5 5L9 20l-5-5zM4 20l-1 1M13 6l5 5M5 15l1-1M18 3l3 3'], ['community', 'Community', 'M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16.5 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3.5 2.7-6 6-6s6 2.5 6 6M14 20c0-3.5 2-6 5-6 1 0 2 .3 3 1']];
+    const TITLES = { guide: ['Guide', 'Understand the fight'], equip: ['Equip', 'Preloaded ammunition'], journey: ['Journey', 'Long obedience, recorded'], battle: ['Battle', 'Worship precedes warfare'], community: ['Community', 'Ending isolation at scale'] };
+    const catOptions = D.CATEGORIES.map(c => ({ id: c.id, name: c.name }));
+    const varOptions = Object.keys(D.VARS).map(k => ({ k, label: D.VARS[k].label }));
+    const P = D.PARTNER;
+    const o = { ...base, tabs: TABS.map(([id, label, d]) => ({ label, d, onTap: () => this.setState({ tab: id }), color: s.tab === id ? this.TABHUE[id] : 'var(--mu)' })), tabHue: this.TABHUE[s.tab], tabKicker: TITLES[s.tab][1], tabTitle: TITLES[s.tab][0], isGuide: s.tab === 'guide', isEquip: s.tab === 'equip', isJourney: s.tab === 'journey', isBattle: s.tab === 'battle', isCommunity: s.tab === 'community', catOptions, varOptions, today: this.today(), partnerName: P.name, partnerCode: P.code, masterFormula: D.MASTER.formula, masterGloss: D.MASTER.gloss, principles: D.MASTER.principles,
+      shareBg: s.shareR ? 'var(--ac)' : 'var(--s2)', shareKnob: s.shareR ? '25px' : '3px', toggleShare: () => this.up({ shareR: !s.shareR }), optBg: s.optIn ? 'var(--ac)' : 'var(--s2)', optKnob: s.optIn ? '25px' : '3px', toggleOptIn: () => this.up({ optIn: !s.optIn }) };
+
+    // Guide
+    o.guideList = s.guideView === 'list'; o.guideDetail = s.guideView === 'detail';
+    o.guideCats = D.CATEGORIES.map(c => { const sc = this.scoresFor(c.id); const r = D.rScore(sc); return { name: c.name, eq: c.eq, hue: this.hue(c.id), r: this.fmt(r), status: D.status(r), color: this.scolor(r), bars: this.bars(sc), open: () => this.setState({ guideView: 'detail', guideCat: c.id, guideSub: 'eq' }) }; });
+    const cat = this.cat(s.guideCat); const sc = this.scoresFor(cat.id); const r = D.rScore(sc);
+    o.cat = cat; o.catHue = this.hue(cat.id); o.backToList = () => this.setState({ guideView: 'list' });
+    o.guideSegs = this.seg([['eq', 'Equation'], ['case', 'Case study'], ['idol', 'Idol'], ['pair', 'Pair']], s.guideSub, v => this.setState({ guideSub: v }));
+    o.gEquation = s.guideSub === 'eq'; o.gCase = s.guideSub === 'case'; o.gIdol = s.guideSub === 'idol'; o.gPair = s.guideSub === 'pair';
+    o.catFormula = `R = (G + S + C) ÷ (I + T + ${cat.x})`; o.rScore = this.fmt(r); o.rStatus = D.status(r); o.rColor = this.scolor(r); o.levText = this.levText(sc);
+    o.vars = Object.keys(D.VARS).map(k => ({ k, label: k === 'X' ? cat.x : D.VARS[k].label, desc: D.VARS[k].desc, val: sc[k], pct: this.pct(sc[k]), color: this.vcolor(k), set: e => this.up({ scores: { ...s.scores, [cat.id]: { ...sc, [k]: +e.target.value } } }) }));
+    const cs = cat.caseStudy; const csr = D.rScore(cs.scores); o.cs = cs; o.csR = this.fmt(csr); o.csColor = this.scolor(csr); o.csOutcome = cs.outcome === 'fell' ? 'Fell' : 'Resisted'; o.csBars = this.bars(cs.scores);
+    const pr = cat.pair; o.pair = pr;
+    const mk = (kind, side, color) => ({ kind, title: side.title, ref: side.ref, note: side.note, r: this.fmt(D.rScore(side.scores)), color, bars: this.bars(side.scores) });
+    o.pairSides = [mk('Committing', pr.committing, 'var(--bad)'), mk('Overcoming', pr.overcoming, 'var(--ok)')];
+    o.pairDiff = Object.keys(D.VARS).map(k => ({ k, d: pr.overcoming.scores[k] - pr.committing.scores[k] })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 3).map(x => `${D.VARS[x.k].label} ${x.d > 0 ? '+' : ''}${x.d}`).join(' · ');
+
+    // Equip
+    o.equipSegs = this.seg([['cards', 'Scripture memory'], ['principles', 'Master principles']], s.equipSub, v => this.setState({ equipSub: v }));
+    o.eCards = s.equipSub === 'cards'; o.ePrinciples = s.equipSub === 'principles';
+    const allCards = D.CATEGORIES.flatMap(c => c.cards.map(cd => ({ ...cd, cat: c.id, catName: c.name, hue: this.hue(c.id) }))).concat(s.customCards.map(cd => ({ ...cd, catName: this.cat(cd.cat).name, hue: this.hue(cd.cat) })));
+    const deck = allCards.filter(c => s.cardFilter === 'all' || c.cat === s.cardFilter);
+    const idx = deck.length ? Math.min(s.cardIdx, deck.length - 1) : 0; const card = deck[idx];
+    o.cardFilters = this.chips([['all', 'All 12']].concat(D.CATEGORIES.map(c => [c.id, c.name, this.hue(c.id)])), s.cardFilter, v => this.setState({ cardFilter: v, cardIdx: 0, flipped: false }));
+    o.cardPos = deck.length ? idx + 1 : 0; o.cardTotal = deck.length; o.hasCard = !!card; o.noCard = !card; o.card = card || { ref: '', text: '', catName: '', hue: 'var(--ac)' };
+    o.masteredCount = Object.keys(s.mastered).filter(k => s.mastered[k]).length;
+    o.cardTransform = s.flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'; o.flipCard = () => this.setState({ flipped: !s.flipped });
+    o.nextCard = () => this.setState({ cardIdx: (idx + 1) % Math.max(1, deck.length), flipped: false }); o.prevCard = () => this.setState({ cardIdx: (idx - 1 + deck.length) % Math.max(1, deck.length), flipped: false });
+    const mastered = card && s.mastered[card.ref];
+    o.masterLabel = mastered ? 'Hidden ✓' : 'Got it'; o.masterBg = mastered ? 'var(--ok)' : 'var(--ac)'; o.masterFg = mastered ? '#0b1a0c' : 'var(--acfg)';
+    o.masterCard = () => { if (!card) return; this.up({ mastered: { ...s.mastered, [card.ref]: true } }); this.toast(card.ref + ' hidden in the heart'); setTimeout(o.nextCard, 350); };
+    o.againCard = () => { if (card) this.up({ mastered: { ...s.mastered, [card.ref]: false } }); o.nextCard(); };
+    o.adding = s.adding; o.notAdding = !s.adding; o.startAdd = () => this.setState({ adding: true }); o.cancelAdd = () => this.setState({ adding: false });
+    o.newRef = s.newCard.ref; o.newText = s.newCard.text; o.newCat = s.newCard.cat;
+    o.setNewRef = e => this.setState({ newCard: { ...s.newCard, ref: e.target.value } }); o.setNewText = e => this.setState({ newCard: { ...s.newCard, text: e.target.value } }); o.setNewCat = e => this.setState({ newCard: { ...s.newCard, cat: e.target.value } });
+    o.saveCard = () => { if (!s.newCard.ref.trim() || !s.newCard.text.trim()) return this.toast('Reference and text are both needed'); this.up({ customCards: [...s.customCards, { ...s.newCard }], adding: false, newCard: { ref: '', text: '', cat: s.newCard.cat }, cardFilter: s.newCard.cat, cardIdx: 9999 }); this.toast('Added to your deck'); };
+
+    // Journey
+    const tr = D.WORSHIP[s.track]; const mmss = n => Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0');
+    o.track = tr; o.playing = s.playing; o.paused = !s.playing; o.togglePlay = () => this.setState({ playing: !s.playing }); o.nextTrack = () => this.setState({ track: (s.track + 1) % D.WORSHIP.length, pos: 0 });
+    o.posLabel = mmss(s.pos); o.durLabel = mmss(tr.dur); o.posPct = (s.pos / tr.dur * 100) + '%';
+    o.tracks = D.WORSHIP.map((t, i) => ({ title: t.title, dur: mmss(t.dur), bg: i === s.track ? 'var(--s2)' : 'transparent', fg: i === s.track ? 'var(--ac)' : 'var(--fg)', onTap: () => this.setState({ track: i, pos: 0, playing: true }) }));
+    o.journeySegs = this.seg([['tracker', 'Tracker'], ['journal', 'Journal'], ['sabbath', 'Sabbath review']], s.journeySub, v => this.setState({ journeySub: v }));
+    o.jTracker = s.journeySub === 'tracker'; o.jJournal = s.journeySub === 'journal'; o.jSabbath = s.journeySub === 'sabbath';
+    const jl = s.journal.slice().sort((a, b) => a.date < b.date ? -1 : 1); const withR = jl.filter(j => j.r != null);
+    const latest = withR.length ? withR[withR.length - 1].r : 1; const first = withR.length ? withR[0].r : latest;
+    o.trkLatest = this.fmt(latest); o.trkColor = this.scolor(latest); o.trkDelta = (latest - first >= 0 ? '+' : '') + this.fmt(latest - first); o.trkCount = s.journal.length;
+    o.trkBars = withR.slice(-7).map(j => ({ r: this.fmt(j.r), pct: Math.min(100, j.r / 2.5 * 100) + '%', color: this.scolor(j.r), label: this.shortDate(j.date) }));
+    const mv = {}; s.journal.forEach(j => { if (!j.v) return; mv[j.v] = mv[j.v] || { moves: 0, net: 0 }; mv[j.v].moves++; mv[j.v].net += (j.to - j.from) * (D.VARS[j.v].side === 'num' ? 1 : -1); });
+    o.varMoves = Object.keys(mv).map(k => ({ k, label: D.VARS[k].label, moves: mv[k].moves, net: (mv[k].net >= 0 ? '+' : '') + mv[k].net, color: this.vcolor(k) }));
+    const nameOf = id => id === 'review' ? 'Sabbath Review' : id === 'stand' ? 'Emergency stand' : this.cat(id).name;
+    o.journalList = jl.slice().reverse().map(j => ({ date: this.shortDate(j.date), catName: nameOf(j.cat), hue: this.hue(j.cat), r: j.r != null ? this.fmt(j.r) : '—', color: j.r != null ? this.scolor(j.r) : 'var(--mu)', move: j.v ? `${D.VARS[j.v].label} ${j.from} → ${j.to}` : (j.title || ''), text: j.text, prayer: j.prayer || '', hasPrayer: !!j.prayer }));
+    const en = s.entry; o.entryCat = en.cat; o.entryVar = en.v; o.entryFrom = en.from; o.entryTo = en.to; o.entryText = en.text; o.entryPrayer = en.prayer;
+    const setE = k => e => this.setState({ entry: { ...s.entry, [k]: e.target.type === 'number' ? +e.target.value : e.target.value } });
+    o.setEntryCat = setE('cat'); o.setEntryVar = setE('v'); o.setEntryFrom = setE('from'); o.setEntryTo = setE('to'); o.setEntryText = setE('text'); o.setEntryPrayer = setE('prayer');
+    o.saveEntry = () => { if (!en.text.trim()) return this.toast('Write what happened first'); const rr = D.rScore(this.scoresFor(en.cat)); this.up({ journal: [...s.journal, { date: this.today(), cat: en.cat, v: en.v, from: en.from, to: en.to, r: +rr.toFixed(2), text: en.text, prayer: en.prayer }], entry: { ...en, text: '', prayer: '' } }); this.toast('Entry recorded'); };
+    o.sabbathQs = D.SABBATH_Q.map((q, i) => ({ n: i + 1, q, val: s.sabbath[i], set: e => { const a = s.sabbath.slice(); a[i] = e.target.value; this.setState({ sabbath: a, sealed: false }); } }));
+    o.sealLabel = s.sealed ? 'Week sealed ✓' : 'Seal the week'; o.sealBg = s.sealed ? 'var(--ok)' : 'var(--ac)'; o.sealFg = s.sealed ? '#0b1a0c' : 'var(--acfg)';
+    o.sealWeek = () => { if (s.sealed) return; if (!s.sabbath.some(x => x.trim())) return this.toast('Answer at least one question'); this.up({ sealed: true, journal: [...s.journal, { date: this.today(), cat: 'review', title: 'Sabbath Review', r: +latest.toFixed(2), text: s.sabbath.filter(x => x.trim()).join(' · ') }] }); this.toast('Week sealed. Rest.'); };
+
+    // Battle
+    o.battleSegs = this.seg([['protocol', 'Jehoshaphat'], ['debrief', 'Post-fall debrief'], ['scenario', 'Scenarios']], s.battleSub, v => this.setState({ battleSub: v }));
+    o.bProtocol = s.battleSub === 'protocol'; o.bDebrief = s.battleSub === 'debrief'; o.bScenario = s.battleSub === 'scenario';
+    const pc = this.cat(s.protoCat);
+    o.protoHue = this.hue(pc.id);
+    o.protoChips = this.chips(D.CATEGORIES.map(c => [c.id, c.name, this.hue(c.id)]), s.protoCat, v => this.setState({ protoCat: v, armor: [false, false, false] }));
+    const steps = [['Scripture', pc.verse.text, pc.verse.ref], ['Prayer', pc.prayer, ''], ['Gratitude', pc.gratitude, '']];
+    o.armorSteps = steps.map(([kind, text, ref], i) => ({ kind, text, ref, hasRef: !!ref, mark: s.armor[i] ? '✓' : i + 1, border: s.armor[i] ? 'var(--ac)' : 'var(--bd)', dotBg: s.armor[i] ? 'var(--ac)' : 'transparent', onTap: () => { const a = s.armor.slice(); a[i] = !a[i]; this.setState({ armor: a }); } }));
+    const armed = s.armor.every(Boolean); const n = s.armor.filter(Boolean).length;
+    o.armorLabel = armed ? 'Armor on. Go fight from victory.' : `${n} of 3 · tap each piece as you put it on`; o.armorBg = armed ? 'var(--ok)' : 'var(--s2)'; o.armorFg = armed ? '#0b1a0c' : 'var(--mu)';
+    const dc = this.cat(s.dbCat); const dr = D.rScore(s.dbScores); const dl = D.leverage(s.dbScores);
+    o.dbSteps = [1, 2, 3].map(i => ({ color: i <= s.dbStep ? 'var(--ac)' : 'var(--s2)' })); o.db1 = s.dbStep === 1; o.db2 = s.dbStep === 2; o.db3 = s.dbStep === 3;
+    o.dbCat = s.dbCat; o.setDbCat = e => this.setState({ dbCat: e.target.value }); o.dbTrigger = s.dbTrigger; o.setDbTrigger = e => this.setState({ dbTrigger: e.target.value });
+    o.dbNext = () => { if (s.dbStep === 1 && !s.dbTrigger.trim()) return this.toast('Name the trigger first'); this.setState({ dbStep: Math.min(3, s.dbStep + 1) }); }; o.dbBack = () => this.setState({ dbStep: Math.max(1, s.dbStep - 1) });
+    o.dbR = this.fmt(dr); o.dbStatus = D.status(dr); o.dbColor = this.scolor(dr);
+    o.dbVars = Object.keys(D.VARS).map(k => ({ k, label: k === 'X' ? dc.x : D.VARS[k].label, val: s.dbScores[k], pct: this.pct(s.dbScores[k]), color: this.vcolor(k), set: e => this.setState({ dbScores: { ...s.dbScores, [k]: +e.target.value } }) }));
+    o.dbLevLabel = dl ? (dl.k === 'X' ? dc.x : D.VARS[dl.k].label) : '—'; o.dbLevText = this.levText(s.dbScores); o.dbAction = dc.action; o.dbVerse = dc.verse.text; o.dbVerseRef = dc.verse.ref;
+    o.dbShareText = `I fell in ${dc.name.toLowerCase()} — ${s.dbTrigger || 'trigger unnamed'}. R at the moment was ${this.fmt(dr)}. There is no condemnation (Rom 8:1). Rebuilding ${o.dbLevLabel} first: ${dc.action}`;
+    o.dbShareLabel = s.dbShared ? 'Sent to ' + P.name.split(' ')[0] + ' ✓' : 'Share with ' + P.name.split(' ')[0]; o.dbShareBg = s.dbShared ? 'var(--ok)' : 'var(--ac)'; o.dbShareFg = s.dbShared ? '#0b1a0c' : 'var(--acfg)';
+    o.dbShare = () => { if (s.dbShared) return; this.up({ dbShared: true, shares: [{ date: this.today(), cat: s.dbCat, text: o.dbShareText }, ...s.shares] }); this.toast('Debrief sent to ' + P.name); };
+    o.dbSaveJournal = () => { if (s.dbSaved) return this.toast('Already in your journal'); this.up({ dbSaved: true, journal: [...s.journal, { date: this.today(), cat: s.dbCat, v: dl ? dl.k : 'C', from: dl ? s.dbScores[dl.k] : 1, to: dl ? (D.VARS[dl.k].side === 'num' ? s.dbScores[dl.k] + 1 : s.dbScores[dl.k] - 1) : 2, r: +dr.toFixed(2), text: 'Post-fall debrief. Trigger: ' + s.dbTrigger, prayer: dc.prayer }] }); this.toast('Saved to journal'); };
+    o.dbReset = () => this.setState({ dbStep: 1, dbTrigger: '', dbShared: false, dbSaved: false, dbScores: { G: 4, S: 4, C: 3, I: 7, T: 8, X: 8 } });
+    const sn = s.scenarios[s.scnIdx];
+    o.scnTabs = s.scenarios.map((x, i) => { const rr = D.rScore(x.scores); return { name: 'Scenario ' + 'ABC'[i], r: this.fmt(rr), status: D.status(rr), color: this.scolor(rr), border: i === s.scnIdx ? 'var(--ac)' : 'var(--bd)', bg: i === s.scnIdx ? 'var(--s1)' : 'transparent', onTap: () => this.setState({ scnIdx: i }) }; });
+    o.scnName = sn.name; o.setScnName = e => { const a = s.scenarios.slice(); a[s.scnIdx] = { ...sn, name: e.target.value }; this.setState({ scenarios: a }); };
+    o.scnVars = Object.keys(D.VARS).map(k => ({ k, val: sn.scores[k], pct: this.pct(sn.scores[k]), color: this.vcolor(k), set: e => { const a = s.scenarios.slice(); a[s.scnIdx] = { ...sn, scores: { ...sn.scores, [k]: +e.target.value } }; this.setState({ scenarios: a }); } }));
+    o.levRows = this.levRows(sn.scores); o.scnLevText = this.levText(sn.scores);
+
+    // Community
+    o.tierSegs = this.seg([[1, 'I · Partner'], [2, 'II · Group'], [3, 'III · Church'], [4, 'IV · Public']], s.tier, v => this.setState({ tier: v }));
+    o.t1 = s.tier === 1; o.t2 = s.tier === 2; o.t3 = s.tier === 3; o.t4 = s.tier === 4;
+    o.tierBlurb = ['One-on-one covenant. The highest-leverage tier: one person who knows the battle by name.', 'Small group of 4–12. Discipleship tools inside a community that already exists.', 'Church and pastoral. Anonymized signal that makes pastors useful to their people.', 'Anonymous, gospel-centered public space. Low friction, high intimacy.'][s.tier - 1];
+    const spark = arr => { const m = Math.max(...arr, 0.1); return arr.map(v => ({ pct: Math.round(v / m * 100) + '%', color: this.scolor(v) })); };
+    o.partnerBars = spark(P.history); o.myBars = spark(withR.slice(-7).map(j => j.r).concat([latest]).slice(-7));
+    o.partnerDark = (this.props.partnerQuiet ?? true) && P.lastActive >= 3 && !s.nudged; o.partnerDays = P.lastActive;
+    o.sendCheckin = () => { this.setState({ checkins: s.checkins + 1 }); this.toast('Prayer check-in sent to ' + P.name); }; o.nudge = () => { this.setState({ nudged: true }); this.toast(P.name + ' nudged. “Still in the fight?”'); };
+    o.checkinNote = s.checkins ? `${s.checkins} check-in${s.checkins > 1 ? 's' : ''} sent today · ${P.name} is working on ${this.cat(P.cat).name}` : `${P.name} is working on ${this.cat(P.cat).name}. Last check-in ${P.lastActive} days ago.`;
+    const cv = s.cov; o.covTitle = cv.title; o.covBody = cv.body; o.setCovTitle = e => this.setState({ cov: { ...cv, title: e.target.value, status: 'draft' } }); o.setCovBody = e => this.setState({ cov: { ...cv, body: e.target.value, status: 'draft' } });
+    const cvS = { draft: ['Draft', 'var(--mu)', 'Send for witness', 'var(--ac)', 'var(--acfg)', 'Awaiting signature', 'var(--bd)', 'var(--mu)', 'Not yet sent'], sent: ['Sent · awaiting', 'var(--warn)', 'Waiting for ' + P.name.split(' ')[0] + '…', 'var(--s2)', 'var(--mu)', 'Awaiting signature', 'var(--warn)', 'var(--warn)', 'Delivered ' + this.today()], witnessed: ['Witnessed', 'var(--ok)', 'Export witnessed covenant (PDF)', 'var(--ok)', '#0b1a0c', P.name, 'var(--fg)', 'var(--fg)', 'Counter-signed · ' + this.today()] }[cv.status];
+    o.covStatus = cvS[0]; o.covColor = cvS[1]; o.covBtnLabel = cvS[2]; o.covBtnBg = cvS[3]; o.covBtnFg = cvS[4]; o.covSig = cvS[5]; o.covLineColor = cvS[6]; o.covSigColor = cvS[7]; o.covSigNote = cvS[8];
+    o.sendCovenant = () => { if (cv.status === 'draft') { this.setState({ cov: { ...cv, status: 'sent' } }); this.toast('Covenant sent to ' + P.name); clearTimeout(this.covT); this.covT = setTimeout(() => { this.setState({ cov: { ...this.state.cov, status: 'witnessed' } }); this.toast(P.name + ' counter-signed your covenant'); }, 2600); } else if (cv.status === 'witnessed') this.toast('Witnessed covenant exported'); };
+    o.shares = s.shares.map(x => ({ date: this.shortDate(x.date), catName: this.cat(x.cat).name, text: x.text })); o.noShares = !s.shares.length;
+    const G = D.GROUP; const gr = G.members.reduce((a, m) => a + m.r, 0) / G.members.length;
+    o.groupName = G.name; o.groupR = this.fmt(gr); o.groupColor = this.scolor(gr); o.groupBars = spark(G.history);
+    o.groupMembers = G.members.map(m => ({ name: m.name, initials: m.name === 'You' ? 'YOU' : m.name.split(' ').map(x => x[0]).join(''), catName: this.cat(m.cat).name, hue: this.hue(m.cat), r: this.fmt(m.r), color: this.scolor(m.r) }));
+    o.groupCatName = this.cat('anger').name; o.groupCatEq = this.cat('anger').eq; o.groupQ = D.SABBATH_Q[2];
+    o.boardVerses = s.boardVerses; o.boardCount = s.boardVerses.length; o.myVerse = s.myVerse; o.setMyVerse = e => this.setState({ myVerse: e.target.value });
+    o.addVerse = () => { if (!s.myVerse.trim()) return; this.up({ boardVerses: [...s.boardVerses, { ref: s.myVerse.trim(), by: 'You' }], myVerse: '' }); this.toast('Added to the collective armor'); };
+    const ch = G.challenge; const chc = this.cat(ch.cat); const correct = D.leverage(ch.scores).k;
+    o.chBy = ch.by; o.chCatName = chc.name; o.chBars = this.bars(ch.scores);
+    o.chOptions = Object.keys(D.VARS).map(k => { const picked = s.chPick === k; const reveal = s.chPick != null; const isC = k === correct; return { k, short: (k === 'X' ? chc.x : D.VARS[k].label).split(' ')[0], onTap: () => this.setState({ chPick: k }), border: reveal && isC ? 'var(--ok)' : picked ? 'var(--ac)' : 'var(--bd)', bg: reveal && isC ? 'var(--ok)' : picked ? 'var(--ac)' : 'var(--s2)', fg: reveal && isC ? '#0b1a0c' : picked ? 'var(--acfg)' : 'var(--fg)' }; });
+    o.chAnswered = s.chPick != null; const chRight = s.chPick === correct;
+    o.chVerdict = chRight ? 'Highest leverage.' : `Close. ${D.VARS[correct].label} moves R most.`; o.chVerdictColor = chRight ? 'var(--ok)' : 'var(--warn)'; o.chExplain = this.levText(ch.scores);
+    o.chResults = ch.results.concat(s.chPick ? [{ name: 'You', pick: s.chPick }] : []).map(x => ({ name: x.name, pick: D.VARS[x.pick].label, color: x.pick === correct ? 'var(--ok)' : 'var(--mu)' }));
+    const C = D.CHURCH; const maxNow = Math.max(...C.spikes.map(x => x.now));
+    o.churchName = C.name; o.churchMembers = C.members; o.churchOptIn = C.optIn; o.churchFalls = C.falls; o.churchDebriefs = C.debriefs;
+    o.spikes = C.spikes.map(x => { const d = x.now - x.prev; return { name: this.cat(x.cat).name, hue: this.hue(x.cat), now: x.now, pct: Math.round(x.now / maxNow * 100) + '%', delta: (d > 0 ? '+' : '') + d, color: d > 3 ? 'var(--bad)' : d > 0 ? 'var(--warn)' : 'var(--ok)' }; });
+    const top = C.spikes.slice().sort((a, b) => (b.now - b.prev) - (a.now - a.prev))[0];
+    o.sermonSignal = `${this.cat(top.cat).name} nearly doubled this week (${top.prev} → ${top.now}). ${this.cat(top.cat).caseStudy.figure} in ${this.cat(top.cat).caseStudy.ref} is the text.`;
+    const co = C.cohort; const coc = this.cat(co.plan[(co.day - 1) % co.plan.length]);
+    o.cohortName = co.name; o.cohortDay = co.day; o.cohortEnrolled = co.enrolled; o.cohortPct = Math.round(co.day / 40 * 100) + '%'; o.cohortCatName = coc.name; o.cohortVerse = coc.verse.text; o.cohortVerseRef = coc.verse.ref; o.cohortPrompt = coc.gratitude;
+    o.cohortBtnLabel = s.cohortDone ? 'Day ' + co.day + ' complete ✓' : 'Mark day ' + co.day + ' complete'; o.cohortBtnBg = s.cohortDone ? 'var(--ok)' : 'var(--ac)'; o.cohortBtnFg = s.cohortDone ? '#0b1a0c' : 'var(--acfg)';
+    o.completeDay = () => { if (!s.cohortDone) { this.setState({ cohortDone: true }); this.toast('Day ' + co.day + ' logged · 38 walking with you'); } };
+    o.prayers = s.prayers.map((p, i) => { const on = !!s.interceding[i]; return { catName: this.cat(p.cat).name, hue: this.hue(p.cat), text: p.text, ago: p.ago, count: p.intercessors + (on ? 1 : 0), label: on ? 'Interceding ✓' : 'I will pray', border: on ? 'var(--ok)' : 'var(--bd)', bg: on ? 'var(--ok)' : 'transparent', fg: on ? '#0b1a0c' : 'var(--fg)', onTap: () => this.setState({ interceding: { ...s.interceding, [i]: !on } }) }; });
+    o.prayerCat = s.prayerCat; o.setPrayerCat = e => this.setState({ prayerCat: e.target.value }); o.prayerText = s.prayerText; o.setPrayerText = e => this.setState({ prayerText: e.target.value });
+    o.submitPrayer = () => { if (!s.prayerText.trim()) return; this.up({ prayers: [{ cat: s.prayerCat, text: s.prayerText.trim(), intercessors: 0, ago: 'now' }, ...s.prayers], prayerText: '' }); this.toast('Routed to ' + C.optIn + ' intercessors'); };
+    o.testimonies = D.TESTIMONIES.map(t => ({ ...t, catName: this.cat(t.cat).name, hue: this.hue(t.cat) }));
+    o.cohortHue = this.hue(coc.id);
+    o.shareTestimony = () => { this.setState({ tab: 'battle', battleSub: 'debrief' }); this.toast('Testimonies start as a debrief. Finish one, then submit.'); };
+    o.rooms = D.CATEGORIES.map(c => ({ name: c.name, hue: this.hue(c.id), count: D.ROOMS[c.id], onTap: () => this.setState({ room: c.id }) }));
+    o.noRoom = !s.room; o.inRoom = !!s.room; o.leaveRoom = () => this.setState({ room: null });
+    if (s.room) {
+      const rc = this.cat(s.room); const basePosts = [{ text: `Tonight is the hard night for ${rc.name.toLowerCase()}. Pray I hold.`, ago: '12m', n: 4 }, { text: `${rc.x} is at a 9 for me right now.`, ago: '41m', n: 7 }, { text: 'Third day standing. Pray I keep going.', ago: '2h', n: 15 }];
+      const posts = (s.roomExtra[s.room] || []).concat(basePosts);
+      o.roomName = rc.name; o.roomHue = this.hue(rc.id); o.roomCount = D.ROOMS[s.room] + (s.roomExtra[s.room] || []).length;
+      o.roomPosts = posts.map((p, i) => { const key = s.room + ':' + i; const on = !!s.prayed[key]; return { text: p.text, ago: p.ago, label: on ? `Praying · ${p.n + 1}` : `Praying for you · ${p.n}`, border: on ? 'var(--ok)' : 'var(--bd)', bg: on ? 'var(--ok)' : 'transparent', fg: on ? '#0b1a0c' : 'var(--fg)', onTap: () => this.setState({ prayed: { ...s.prayed, [key]: !on } }) }; });
+      o.roomDraft = s.roomDraft; o.setRoomDraft = e => this.setState({ roomDraft: e.target.value });
+      o.postRoom = () => { if (!s.roomDraft.trim()) return; this.setState({ roomExtra: { ...s.roomExtra, [s.room]: [{ text: s.roomDraft.trim(), ago: 'now', n: 0 }, ...(s.roomExtra[s.room] || [])] }, roomDraft: '' }); this.toast('Posted anonymously'); };
+    }
+
+    // Emergency
+    const ec = this.cat(s.emCat);
+    o.emDots = [0, 1, 2, 3].map(i => ({ color: i <= s.emPhase ? 'var(--bad)' : 'var(--s2)' }));
+    o.em0 = s.emPhase === 0; o.em1 = s.emPhase === 1; o.em2 = s.emPhase === 2; o.em3 = s.emPhase === 3;
+    o.emHue = this.hue(ec.id);
+    o.emCats = D.CATEGORIES.map(c => ({ name: c.name, hue: this.hue(c.id), onTap: () => this.setState({ emCat: c.id, emPhase: 1, breath: 0 }) }));
+    o.emCatName = ec.name; o.emNext = () => this.setState({ emPhase: Math.min(3, s.emPhase + 1) });
+    const b = s.breath; const ph = b < 4 ? 'in' : b < 7 ? 'hold' : 'out';
+    o.breathLabel = ph === 'in' ? 'Breathe in' : ph === 'hold' ? 'Hold' : 'Breathe out'; o.breathTransform = ph === 'out' ? 'scale(.55)' : 'scale(1)';
+    o.breathLine = ph === 'in' ? 'The Lord is my light and my salvation' : ph === 'hold' ? 'whom shall I fear?' : 'Psalm 27:1';
+    o.emVerse = ec.verse.text; o.emVerseRef = ec.verse.ref; o.emPrayer = ec.prayer; o.emAction = ec.action;
+    o.emTellPartner = () => this.toast('“Fighting.” sent to ' + P.name);
+    o.emDone = () => { this.up({ em: false, journal: [...s.journal, { date: this.today(), cat: 'stand', title: 'Stood in ' + ec.name, r: +D.rScore(this.scoresFor(ec.id)).toFixed(2), text: 'Emergency mode · ' + ec.verse.ref + ' · ' + ec.action }] }); this.toast('Stood. Logged to your journal.'); };
+    return o;
+  }
+}
+</script>
+</body>
+</html>
